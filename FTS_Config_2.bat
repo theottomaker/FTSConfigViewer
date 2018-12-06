@@ -1,0 +1,1 @@
+pyinstaller FTS_ConfigViewer_v2.py --icon=icon.ico --onefile --version-file=versioninfo.py
