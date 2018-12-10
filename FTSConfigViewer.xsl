@@ -3,9 +3,12 @@
 
 <!--*********This stylesheet is for automated formatting of FTS configuration files .xml file ********-->
 <!-- Water Survey of Canada FTS StyleSheet v 2.2 -->
-<!-- Developed 2018-12-05 -->
+<!-- Developed 2018-12-07 -->
 <!-- ottO Bédard, MSc - North Bay, Ontario - otto.bedard@canada.ca -->
 <!-- Updates
+
+v 2.3
+- Minor Formatting changes
 
 v 2.2
 - Adjusted Burst Averaging
@@ -540,7 +543,7 @@ section.versions
 		<th>Interval</th>
 		<th>Offset</th>
 		<th>Burst Samples</th>
-		<th>Sample Time</th>
+		<th>Burst Time</th>
 		<th>Command Summaries</th>
 		</tr>
 
@@ -601,7 +604,13 @@ section.versions
 	<!-- Burst Averaging Information -->
 	<td><xsl:value-of select="current()//@CmdNumberOfSamples"/>
 	</td>
-	<td><xsl:value-of select="current()//@CmdSamplePeriod"/>
+	<td>
+    <!-- Convert the Offset Time from seconds into HH:MM:SS -->
+    <xsl:variable name="seconds" select="current()//@CmdSamplePeriod" />
+
+    <xsl:value-of select="format-number(floor($seconds div 3600), '00')" />
+    <xsl:value-of select="format-number(floor($seconds div 60) mod 60, ':00')"/>
+    <xsl:value-of select="format-number($seconds mod 60, ':00')"/>
 	</td>
 	
 	

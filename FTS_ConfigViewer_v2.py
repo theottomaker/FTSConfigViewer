@@ -12,8 +12,10 @@
 
 # GUI PROGRAMMING Work
 import os
+from ftplib import FTP
 from shutil import copy
 from appJar import gui
+
 
 global evr_filename
 evr_filename = '0'
@@ -34,11 +36,16 @@ def reset(btn):
     global lp_filename
     lp_filename='0'
 
-    app.setImage("LP",'star.gif')
-    app.setImage("EV",'star.gif')
-    
-    app.setButtonState("Choose EVR.txt File","disabled")
-    app.setButtonState("Process Files","disabled")
+    # Reset the options, and update the colours
+    app.setButtonState("Load End Visit Report","disabled")
+    app.setButtonState("View Summary","disabled")
+     
+    app.setButtonState("Load Logger LP#.xml","active")
+
+    app.setButtonFg("Load Logger LP#.xml","black")
+    app.setButtonFg("Load End Visit Report","black")
+    app.setButtonBg("Load Logger LP#.xml","whitesmoke")
+    app.setButtonBg("Load End Visit Report","whitesmoke")
 
 
 # Check the LP# File to see if it is good
@@ -49,31 +56,53 @@ def lp(btn):
         global evr_filename
         global lp_filename
 
-        lp_filename = app.openBox("Choose FTS Config File","",[('FTS Config','*.xml')])  
+        lp_filename = app.openBox("Choose FTS Config File","",[('FTS Config File','*.xml')])  
         print('Attempting to Open: ' + lp_filename)
-        file = open(lp_filename,'r')
-        print('File Opened')
+              
+        #Check for empty file!
+        exists = os.path.isfile(lp_filename)
+        
+        if exists:
+            
 
-        # read the first line, so that we don't read it in later
-        file.read()
+            file = open(lp_filename,'r')
+            print('File Opened')
 
-        # We are good, so close the file and update the check boxes
-        file.close()
-        print('File Closed')
-        # We read the file, so we can update the star to a check
-        app.setImage("LP",'check.gif')
-        app.setButtonState("Process Files","active")
-        app.setButtonState("Choose EVR.txt File","active")
+            # read the first line, so that we don't read it in later
+            file.read()
+
+            # We are good, so close the file and update the check boxes
+            file.close()
+            print('File Closed')
+
+            # We read the file, so we can update the button colour
+            app.setButtonFg("Load Logger LP#.xml","green")
+
+            # Enable the next steps in the workflow
+            app.setButtonState("Reset","active")
+            app.setButtonState("Load End Visit Report","active")
+            app.setButtonState("View Summary","active")
+        
+        else:
+            # Oh dear, they didn't load anything
+            print("no file selected")
+            app.infoBox("Information","Please select an FTS datalogger .xml configuration file.")   
 
 
     except:
-        print('Something went wrong!!!')
-        # Somethign went wrong!
-        app.setImage("LP",'x.gif')
-        app.setButtonState("Process Files","disabled")
+        
+        # Something went wrong!
+        print("Something went wrong opening:" + lp_filename)
+        
+        # Change the button colours
+        app.setButtonFg("Load Logger LP#.xml","red")
 
+        # Disable the Process button
+        app.setButtonState("View Summary","disabled")
 
-       
+        # Through a pop up with an error
+        app.errorBox("Error!","An error has occured in loading the file.\nPlease select Reset and start over.\n\n Thanks")
+      
 # This function will load the Visit Report File and see if it is good
 def evr(btn):
    
@@ -86,28 +115,58 @@ def evr(btn):
         # Get the user to point us to the file
         evr_filename = app.openBox("Choose FTS End Visit Report","",[('FTS EVR','*.txt')])
         print('Attempting to Open: ' + evr_filename)
-        # Open the file
-        evr_file = open(evr_filename,"r")
-        print('File Opened')
-        # Read the file content as a check
-        evr_file_content = evr_file.read()
-        # print(evr_file_content)
-        # CLose the file
-        evr_file.close()
-        print('File Closed')
-        # We read the file, so we can update the star to a check
-        app.setImage("EV",'check.gif')
+        
+        #Check for empty file!
+        exists = os.path.isfile(evr_filename)
+        
+        if exists:
+            # We have a file, Load er up
+            print("file selected")
+
+            # Open the file
+            evr_file = open(evr_filename,"r")
+            print('File Opened')
+            # Read the file content as a check
+            evr_file_content = evr_file.read()
+            # print(evr_file_content) # for debugging
+            # CLose the file
+            evr_file.close()
+            print('File Closed')
+        
+            # We read the file, so we can update the button colour
+            app.setButtonFg("Load End Visit Report","green")
+
+        else:
+            # Oh dear, they didn't load anything
+            print("no file selected")
+            app.infoBox("Information","Please select an End Visit Report to use this feature.") 
+            # Change the colour to red to indicate that they didn't load anything
+            app.setButtonFg("Load End Visit Report","red")
+
+        
             
     except:
         # Something went wrong!
-        print("Something went wrong openning:" + evr_filename)
-        # Change the image
-        app.setImage("EV",'x.gif')
-        # Disable the Process button
-        app.setButtonState("Process Files","disabled")
+        print("Something went wrong opening:" + evr_filename)
+        
+        # Change the button colours
+        app.setButtonFg("Load End Visit Report","red")
+        app.setButtonFg("Load Logger LP#.xml","red")
+        # Change the button colours
+        app.setButtonBg("Load End Visit Report","red")
+        app.setButtonBg("Load Logger LP#.xml","red")
+
+        # Disable the buttons to make the user start over
+        app.setButtonState("View Summary","disabled")
+        app.setButtonState("Load Logger LP#.xml","disabled")
+        app.setButtonState("Load End Visit Report","disabled")
+
+
+
+        # Through a pop up with an error
+        app.errorBox("Error!","An error has occured in loading the file.\nPlease select Reset and start over.\n\nThanks")
 
 # Menu Processiong
-
 def menuPress(item):
     
     # Figure out which button was pushed, then complete the corresponding request
@@ -118,13 +177,84 @@ def menuPress(item):
         # Exit the program
         app.stop()
     elif item == "About":
-        # Provide more information
-        print('About')
+        # Provide more information to the user
+        app.infoBox("About","This software package was developed specifically for the Water Survey of Canada," +
+            "a division of Environment and Climate Change Canada.\n\n" + \
+            "This software has no license restrictions and is used at your own risk.\n\n" + \
+            "Special thanks to all the technicians that took the time to test and provide feedback for the development.\n\n\n"+\
+            "For comments or improvement ideas, contact the developer\nottO Bedard, Hydrometric Technologist\nNorth Bay, Ontario, Canada\notto.bedard@canada.ca")
+
     elif item == "Check Version":
-        # Open the version checking dialog
-        print('Version Check')
+        # Go to the NAIS ftp site and get the latest version numbers
+        try:
+            
+            ftp = FTP('nais.ec.gc.ca')
+            ftp.login('wsctradesite', 'WSCtrade123')            
+            ftp.cwd('WSC FTS CV')
+
+            localfile = open('webversion.txt','wb')
+
+            ftp.retrbinary('RETR currentversion.txt', localfile.write)
+            print('Read the ftp file contents successfully')            
+            ftp.close
+            localfile.close()
+            print('FTP Grab successful')
+
+            # Read the local file now and do a comparison
+            # Determine if an update is needed
+            lfile = open('version.txt','r')
+            #print(lfile) # For debugging
+            curprogramver = float(lfile.readline())
+            curstylever = float(lfile.readline())
+            lfile.close()
+                        
+            print("Installed Program Version: ", curprogramver)
+            print("Installed Stylesheet Version: ",curstylever)
+
+            #Read the webcreated file version information
+            wfile = open('webversion.txt','r')
+            #print(wfile) # For debugging
+            webprogramver = float(wfile.readline())  # This is the problem line right now!!! it is reading A BLANK SPACE!!!!
+            #print(webprogramver)
+            webstylever = float(wfile.readline())
+            #print(webstylever)
+            wfile.close()          
+            
+            print("Available Program Version: ", webprogramver)
+            print("Available Stylesheet Version: ",webstylever)
+
+            # Do the comparison and determine the outcome
+            # Create a message for the user
+            usermessage = ""
+
+            if webprogramver > curprogramver:
+                # update to main program needed
+                usermessage = usermessage + "Main Program Update Required \n    - Please update from version " + str(curprogramver) + " to version " + str(webprogramver) + "\n\n"
+            else:
+                usermessage = usermessage + 'You are using the most current version of the main program \n\n'
+
+
+            if webstylever > curstylever:
+                # update to Style Sheet
+                usermessage = usermessage + 'Stylesheet Update Recommended \n    - Please update from version ' + str(curstylever) + ' to version ' + str(webstylever) + '\n\n'
+            else:
+                usermessage = usermessage + 'You are using the most current version of the stylesheet \n\n'
         
-     
+            usermessage = usermessage + "Please visit the WSC Atlassian Site for the most to date versions"
+
+
+            print('Comparison complete')
+            #print(mainupdate,styleupdate)
+
+            #display the message
+            app.infoBox("Version Check Results",usermessage)
+            
+        
+        except:
+            # Give an error window
+            app.errorBox("Version Checking Error","Version checking encountered an error and did not complete.")
+            print('Error!!!')
+                         
 # The actual processing of the files
 def process(btn):
     
@@ -144,11 +274,7 @@ def process(btn):
     # It is possible that users want to just process the file with the LP config, and not both the EVR
     # We need to check for one of two cases, either just LP, or BOTH, it can't just be EVR.
 
-
-    # YOU ARE HERE!!!!
-    # Something is wrong here!! Try to figure out how to see if the file exists!!
-
-    if evr_filename is not '0':
+    if os.path.isfile(evr_filename):
         # Call the EVR Function
         
         # Read in the End Visit Report EVR
@@ -241,7 +367,7 @@ def process(btn):
   
     # If there is NO EVR LOADED, SKIP THIS!!!
 
-    if evr_filename is not '0':
+    if os.path.isfile(evr_filename):
         # Append the File with the NEW data
         newfile.write('<VisitReport ')
         newfile.write(''.join(evr_output))
@@ -264,9 +390,9 @@ def process(btn):
     print('Open new xml for viewing!')
     os.startfile(newfilename)
 
-
 # Start an APP instance and the settings
 app = gui("FTS Config Viewer")
+app.setFont("Verdana 12")
 app.setResizable(False)
 app.setSticky("news")
 app.setExpand("both")
@@ -274,40 +400,32 @@ app.setExpand("both")
 app.setGuiPadding(20,20)
 app.setBg("white")
 
-
 # Add all the labels and the buttons
+app.addLabel("title",'FTS Config Viewer')
+app.getLabelWidget("title").config(font="Verdana 24")
+app.addLabel("Nothing0",'')
 
-app.addLabel("title",'FTS Config Viewer',0,0,4)
-app.getLabelWidget("title").config(font="Times 24")
+app.addImage('WSC','wsc.gif')
+app.addLabel("Nothing1",'')
 
-app.addImage('WSC','wsc.gif',1,0,4)
-app.addLabel("Nothing",'---------------------------------------------------------------------',2,0,4)
+app.addButton("Load Logger LP#.xml", lp)
 
-
-app.addButton("Choose LP#.xml File", lp, 3, 1)
-app.addImage('LP','star.gif',3,0)
-app.setButtonFont("LP","Verdana 18")
-
-app.addButton("Choose EVR.txt File", evr,4,1)
-app.addImage('EV','star.gif',4,0)
-
-app.addLabel("Nothing2",' ',5,0,3)
-
-app.addButton("Process Files", process,6,1)
-app.addLabel("Nothing3",' ',7,0,3)
-
-app.addButton("Reset", reset, 8,1)
-app.addButton("Exit", exit,9,1)
+app.addButton("Load End Visit Report", evr)
 
 
-app.addLabel("Instructions",'Load Logger Configuration File\n\n *Optional -- Load End Visit Report\n for supplemental information\n\n\nProcess File for viewing\n in web browser',3,3,rowspan=4)
-app.setLabelBg("Instructions","white")
-app.getLabelWidget("Instructions").config(font="Times 14")
+app.addLabel("Nothing2",' ')
 
+app.addButton("View Summary", process)
+app.addLabel("Nothing3",' ')
+
+app.addButton("Reset", reset)
+app.addLabel("Nothing4",' ')
+app.addButton("Exit", exit)
 
 # Start with disabled buttons for Processing and for the End Visit Report
-app.setButtonState("Process Files","disabled")
-app.setButtonState("Choose EVR.txt File","disabled")
+app.setButtonState("View Summary","disabled")
+app.setButtonState("Reset","disabled")
+app.setButtonState("Load End Visit Report","disabled")
 
 # Add a menu for the help and version checking options
 app.addMenuList("File",["Help","About","Check Version","-","Exit"],menuPress)

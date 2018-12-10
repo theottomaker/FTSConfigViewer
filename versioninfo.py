@@ -1,7 +1,7 @@
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(2, 0, 0, 0),
-    prodvers=(2, 0, 0, 0),
+    filevers=(2, 3, 0, 0),
+    prodvers=(2, 3, 0, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
@@ -21,7 +21,7 @@ VSVersionInfo(
         StringStruct(u'LegalCopyright', u'\xa9 Water Survey of Canada. All rights reserved.'),
         StringStruct(u'OriginalFilename', u'FTS_ConfigViewer_v2.exe'),
         StringStruct(u'ProductName', u'FTS Configuration Viewer'),
-        StringStruct(u'ProductVersion', u'2.0')])
+        StringStruct(u'ProductVersion', u'2.3')])
       ]), 
     VarFileInfo([VarStruct(u'Translation', [1033, 1200])])
   ]

@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['FTS_ConfigViewer_v2.py'],
-             pathex=['C:\\Users\\BedardO\\source\\repos\\FTSViewer\\V2'],
+             pathex=['C:\\Users\\BedardO\\source\\repos\\FTSConfigViewer'],
              binaries=[],
              datas=[],
              hiddenimports=[],
