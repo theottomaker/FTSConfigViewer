@@ -1,13 +1,13 @@
 # FTS Configuration Viewer
 # ottO Bédard, MSc.
 # Environment and Climate Change Canada
-# 2018-12-05
-# v2.2
 # otto.bedard@canada.ca
 # Developed for Water Survey of Canada for ease of reading configuration files from FTS H1/H2 data loggers
 
-# v 2.2
-# added Menu List and Version Checking capability
+# v2.3/4 added none-FTP version checking
+# 2019-12-04
+
+# v 2.2 # added Menu List and Version Checking capability
 
 
 # GUI PROGRAMMING Work
@@ -15,6 +15,8 @@ import os
 from ftplib import FTP
 from shutil import copy
 from appJar import gui
+
+import requests
 
 
 global evr_filename
@@ -185,20 +187,17 @@ def menuPress(item):
             "For comments or improvement ideas, contact the developer\nottO Bedard, Hydrometric Technologist\nNorth Bay, Ontario, Canada\notto.bedard@canada.ca")
 
     elif item == "Check Version":
-        # Go to the NAIS ftp site and get the latest version numbers
+        # Try to go to GITHUB and get a web version for checking against
         try:
             
-            ftp = FTP('nais.ec.gc.ca')
-            ftp.login('wsctradesite', 'WSCtrade123')            
-            ftp.cwd('WSC FTS CV')
+            message_url = "https://raw.githubusercontent.com/theottomaker/FTSConfigViewer/master/webversion.txt"
+            response = requests.get(message_url)
+            webversion = response.content.decode('Windows-1252')
+            # split up the webfile into what we need
 
-            localfile = open('webversion.txt','wb')
-
-            ftp.retrbinary('RETR currentversion.txt', localfile.write)
-            print('Read the ftp file contents successfully')            
-            ftp.close
-            localfile.close()
-            print('FTP Grab successful')
+            weblines = webversion.splitlines()
+            webprogramver = float(weblines[0])
+            webstylever = float(weblines[1])
 
             # Read the local file now and do a comparison
             # Determine if an update is needed
@@ -211,15 +210,6 @@ def menuPress(item):
             print("Installed Program Version: ", curprogramver)
             print("Installed Stylesheet Version: ",curstylever)
 
-            #Read the webcreated file version information
-            wfile = open('webversion.txt','r')
-            #print(wfile) # For debugging
-            webprogramver = float(wfile.readline())  # This is the problem line right now!!! it is reading A BLANK SPACE!!!!
-            #print(webprogramver)
-            webstylever = float(wfile.readline())
-            #print(webstylever)
-            wfile.close()          
-            
             print("Available Program Version: ", webprogramver)
             print("Available Stylesheet Version: ",webstylever)
 
