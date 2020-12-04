@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <!--*********This stylesheet is for automated formatting of FTS configuration files .xml file ********-->
-<!-- Water Survey of Canada FTS StyleSheet v 2.2 -->
+<!-- Water Survey of Canada FTS StyleSheet v 2.3 -->
 <!-- Developed 2018-12-07 -->
 <!-- ottO Bédard, MSc - North Bay, Ontario - otto.bedard@canada.ca -->
 <!-- Updates
