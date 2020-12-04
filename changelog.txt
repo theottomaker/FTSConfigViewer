@@ -1,0 +1,45 @@
+Changelog
+
+Version 2.4
+-	Overhaul of the “Check Version” algorithm
+	Switched to gitraw from FTP storage
+Version 2.3
+-	GUI complete overhaul
+-	Addition of File… menu to include About, Help, Version
+-	Version Checking looks to FTP site for most recent versions
+-	Addition of error and info messages for user feedback
+-	Significant changes to stylesheet (see .xsl for development notes)
+Version 2.2
+-	Formatting and minor changes, not released
+Version 2.1
+-	Extended Visit Report information
+-	Minor formatting
+Version 2.0
+-	Added option to include End Visit Report Supplemental Information
+-	Updated Stylesheet to include End Visit Report information
+-	Reset Button Added
+-	Help Button added
+-	Minor formatting
+Version 1.5
+-	Minor formatting
+-	Expanded information for Processes, including scripts, delta, maxmin, etc
+-	Reduction of duplicate information in Telemetry section
+-	Updates to styling information
+Version 1.4
+-	Minor formatting
+-	Added FieldNum to sensors table
+Version 1.3
+-	Sticky Station Name/Number
+-	Expansion of SDI-AM information into separate tables
+-	Link to photo of SDI-AM
+-	Fix for Time Zone Bias
+-	Updates to Manual
+Version 1.2
+-	Files now stored in c:\temp\FTSViewer for clarity
+Version 1.1
+-	Formatting fixes
+-	Add Test for multiple Telemetry modes
+Version 1.0
+-	Initial Release
+Version 0.9
+-	Development Release

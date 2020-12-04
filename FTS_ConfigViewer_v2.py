@@ -4,6 +4,9 @@
 # otto.bedard@canada.ca
 # Developed for Water Survey of Canada for ease of reading configuration files from FTS H1/H2 data loggers
 
+# v2.5 2020-12-04
+# changed local .xsl to github repository for FireFox fix and long term adaptability.
+
 # v2.3/4 added none-FTP version checking
 # 2019-12-04
 
@@ -189,6 +192,9 @@ def menuPress(item):
     elif item == "Check Version":
         # Try to go to GITHUB and get a web version for checking against
         try:
+
+
+            # 2020-12-04 Remove the stylesheet checking, as it is now just on the web in GITHUB
             
             message_url = "https://raw.githubusercontent.com/theottomaker/FTSConfigViewer/master/webversion.txt"
             response = requests.get(message_url)
@@ -197,21 +203,21 @@ def menuPress(item):
 
             weblines = webversion.splitlines()
             webprogramver = float(weblines[0])
-            webstylever = float(weblines[1])
+            #webstylever = float(weblines[1])
 
             # Read the local file now and do a comparison
             # Determine if an update is needed
             lfile = open('version.txt','r')
             #print(lfile) # For debugging
             curprogramver = float(lfile.readline())
-            curstylever = float(lfile.readline())
+            #curstylever = float(lfile.readline())
             lfile.close()
                         
             print("Installed Program Version: ", curprogramver)
-            print("Installed Stylesheet Version: ",curstylever)
+            #print("Installed Stylesheet Version: ",curstylever)
 
             print("Available Program Version: ", webprogramver)
-            print("Available Stylesheet Version: ",webstylever)
+            #print("Available Stylesheet Version: ",webstylever)
 
             # Do the comparison and determine the outcome
             # Create a message for the user
@@ -224,11 +230,11 @@ def menuPress(item):
                 usermessage = usermessage + 'You are using the most current version of the main program \n\n'
 
 
-            if webstylever > curstylever:
+            #if webstylever > curstylever:
                 # update to Style Sheet
-                usermessage = usermessage + 'Stylesheet Update Recommended \n    - Please update from version ' + str(curstylever) + ' to version ' + str(webstylever) + '\n\n'
-            else:
-                usermessage = usermessage + 'You are using the most current version of the stylesheet \n\n'
+            #    usermessage = usermessage + 'Stylesheet Update Recommended \n    - Please update from version ' + str(curstylever) + ' to version ' + str(webstylever) + '\n\n'
+            #else:
+            #    usermessage = usermessage + 'You are using the most current version of the stylesheet \n\n'
         
             usermessage = usermessage + "Please visit the WSC Atlassian Site for the most to date versions"
 
@@ -353,7 +359,7 @@ def process(btn):
         
     # open the newfile and add the first few new lines
     newfile = open(newfilename,'w')
-    newfile.write('<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type= "text/xsl" href="FTSConfigViewer.xsl"?><XMLRoot>')
+    newfile.write('<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type= "text/xsl" href="https://raw.githubusercontent.com/theottomaker/FTSConfigViewer/master/FTSConfigViewer.xsl"?><XMLRoot>')
   
     # If there is NO EVR LOADED, SKIP THIS!!!
 
@@ -371,10 +377,11 @@ def process(btn):
     # Feedback
     print("Contents of newfile written!")
 
+    # 2020-12-04 We can remove this, as we are using a GITHUB RAW File
     # let's copy the style sheet to the correct folder
-    pathname = os.path.dirname(newfilename)+ '/FTSConfigViewer.xsl'
-    print('Copying stylesheet to: ' + pathname)
-    copy('FTSConfigViewer.xsl',pathname)
+    # pathname = os.path.dirname(newfilename)+ '/FTSConfigViewer.xsl'
+    # print('Copying stylesheet to: ' + pathname)
+    # copy('FTSConfigViewer.xsl',pathname)
 
     # open that file in the default program (web browser likely - hopefully!!!)
     print('Open new xml for viewing!')
