@@ -249,7 +249,7 @@ section.versions
 			<td><xsl:value-of select="//@Name"/></td>
 			
 			<th>GMT Offset</th>
-			<td>
+			<td>-
 			<!-- Convert the TimeZoneInfo Bias from minutes! into HH:MM:SS -->
 			<xsl:variable name="seconds" select="//@Bias*60" />
 
